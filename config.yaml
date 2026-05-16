@@ -1,0 +1,30 @@
+vault:
+  path: "E:/MindSea"
+  ignore_patterns:
+    - ".git"
+    - ".obsidian"
+    - "_templates"
+
+server:
+  host: "127.0.0.1"
+  port: 8000
+
+ai:
+  provider: "anthropic"
+  model: "claude-sonnet-4-6"
+  api_key_env: "ANTHROPIC_API_KEY"
+
+embedding:
+  model: "BAAI/bge-small-zh"
+  device: "cpu"
+  onnx: true
+
+search:
+  hybrid:
+    algorithm: "rrf"
+    rrf_k: 60
+  top_k: 10
+
+index:
+  auto_index: true
+  debounce_ms: 2000
