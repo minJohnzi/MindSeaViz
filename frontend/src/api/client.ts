@@ -16,7 +16,7 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   return res.json();
 }
 
-// SSE stream helper for chat
+// SSE 流式聊天
 export function streamChat(
   path: string,
   body: unknown,
@@ -33,6 +33,7 @@ export function streamChat(
     if (!reader) return;
     const decoder = new TextDecoder();
     let buf = "";
+    let currentEvent = "";
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -41,11 +42,10 @@ export function streamChat(
       buf = lines.pop() || "";
       for (const line of lines) {
         if (line.startsWith("event: ")) {
-          const event = line.slice(7).trim();
-          onEvent(event, null);
+          currentEvent = line.slice(7).trim();
         } else if (line.startsWith("data: ")) {
           const data = JSON.parse(line.slice(6));
-          onEvent("", data);
+          onEvent(currentEvent, data);
         }
       }
     }
