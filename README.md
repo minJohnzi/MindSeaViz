@@ -1,8 +1,10 @@
 # MindSeaViz
 
-Visual knowledge base assistant for the MindSea Obsidian vault.
+Visual knowledge base assistant for Obsidian vaults — Graph Browser + Dashboard + RAG Chat.
 
-Web application (Python FastAPI + React/TypeScript), designed for future Electron wrapper.
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+Web application (Python FastAPI + React/TypeScript), designed for future Electron wrapping.
 
 ## Modules
 
@@ -14,29 +16,38 @@ Web application (Python FastAPI + React/TypeScript), designed for future Electro
 
 ## Quick Start
 
-### Prerequisites
+### 一键启动 (Windows)
 
-- Python >= 3.11
-- Node.js >= 18
+双击 `start.bat`，自动启动后端 + 前端并打开浏览器。
 
-### Backend
+### 手动启动
+
+**前置要求**: Python >= 3.11, Node.js >= 18
 
 ```bash
-cd backend
+# 1. 后端
+cp .env.example .env        # 编辑填入 ANTHROPIC_API_KEY
 pip install -e ".[embedding]"
-cp config.yaml.example config.yaml   # edit vault.path to your Obsidian vault
-uvicorn main:app --reload
-```
+uvicorn main:app --host 127.0.0.1 --port 8001
 
-### Frontend
-
-```bash
+# 2. 前端 (新终端)
 cd frontend
 npm install
 npm run dev
+
+# 3. 打开浏览器
+# http://127.0.0.1:5173
 ```
 
-Open http://localhost:5173
+### 配置
+
+编辑 `config.yaml` 设置 vault 路径：
+
+```yaml
+vault:
+  path: "E:/MindSea"   # 你的 Obsidian vault 路径
+```
+首次启动会自动下载 BGE-small-zh 嵌入模型 (~100MB)。
 
 ## Architecture
 
@@ -119,6 +130,10 @@ search:
 
 See [docs/file-structure.md](docs/file-structure.md)
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## License
 
-TBD
+MIT — see [LICENSE](LICENSE) for details.
