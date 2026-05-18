@@ -3,6 +3,38 @@ import type { GraphData } from "@/lib/graph-renderer";
 
 export type View = "graph" | "dashboard" | "chat" | "settings";
 
+// ── Theme ──
+
+type Theme = "dark" | "light";
+
+const getInitialTheme = (): Theme => {
+  const stored = localStorage.getItem("mindsea-theme");
+  if (stored === "light" || stored === "dark") return stored;
+  return "dark";
+};
+
+const applyTheme = (t: Theme) => {
+  document.documentElement.classList.toggle("dark", t === "dark");
+};
+
+applyTheme(getInitialTheme());
+
+interface ThemeState {
+  theme: Theme;
+  toggleTheme: () => void;
+}
+
+export const useThemeStore = create<ThemeState>((set) => ({
+  theme: getInitialTheme(),
+  toggleTheme: () =>
+    set((s) => {
+      const next: Theme = s.theme === "dark" ? "light" : "dark";
+      localStorage.setItem("mindsea-theme", next);
+      applyTheme(next);
+      return { theme: next };
+    }),
+}));
+
 // ── Navigation ──
 
 interface NavState {

@@ -1,40 +1,32 @@
 import { useStats } from "@/api/hooks";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Clock } from "lucide-react";
 
 export function RecentNotes() {
   const { recent } = useStats();
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm flex items-center gap-1.5">
-          <Clock className="h-4 w-4 text-blue-500" />
-          最近更新
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-52">
-          <div className="space-y-1">
-            {recent.slice(0, 20).map((r) => (
-              <div
-                key={r.path}
-                className="text-xs px-2 py-1 rounded hover:bg-muted cursor-default flex justify-between"
-                title={r.path}
-              >
-                <span className="font-medium truncate">{r.title}</span>
-                <span className="text-muted-foreground shrink-0 ml-2">
-                  {r.modified?.slice(0, 16).replace("T", " ") ?? ""}
-                </span>
-              </div>
-            ))}
-            {recent.length === 0 && (
-              <p className="text-xs text-muted-foreground p-2">暂无最近更新</p>
-            )}
+    <div className="rounded-2xl bg-secondary/50 border border-border/50 px-5 py-4">
+      <h3 className="text-sm font-semibold mb-1 flex items-center gap-2">
+        <Clock className="h-4 w-4 text-blue-500" />
+        最近更新
+      </h3>
+      <p className="text-xs text-muted-foreground mb-3">7 天内修改的笔记</p>
+      <div className="max-h-48 overflow-auto space-y-0.5">
+        {recent.slice(0, 20).map((r) => (
+          <div
+            key={r.path}
+            className="text-xs px-2.5 py-1.5 rounded-lg hover:bg-background/80 transition-colors cursor-default flex justify-between"
+          >
+            <span className="font-medium truncate">{r.title}</span>
+            <span className="text-muted-foreground shrink-0 ml-2">
+              {r.modified?.slice(0, 16).replace("T", " ") ?? ""}
+            </span>
           </div>
-        </ScrollArea>
-      </CardContent>
-    </Card>
+        ))}
+        {recent.length === 0 && (
+          <p className="text-xs text-muted-foreground px-2.5 py-2">暂无更新</p>
+        )}
+      </div>
+    </div>
   );
 }

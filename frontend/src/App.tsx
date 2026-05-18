@@ -9,14 +9,19 @@ import { useNavStore } from "@/stores";
 
 function DashboardView() {
   return (
-    <div className="flex-1 overflow-auto p-6 space-y-6">
-      <h2 className="text-lg font-semibold">仪表盘</h2>
-      <StatsCards />
-      <div className="grid grid-cols-2 gap-4">
-        <TagCloud />
-        <div className="space-y-4">
-          <OrphanList />
-          <RecentNotes />
+    <div className="flex-1 overflow-auto">
+      <div className="max-w-4xl mx-auto p-8 space-y-8">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight mb-1">仪表盘</h2>
+          <p className="text-sm text-muted-foreground">笔记库概览与统计</p>
+        </div>
+        <StatsCards />
+        <div className="grid grid-cols-2 gap-6">
+          <TagCloud />
+          <div className="space-y-6">
+            <OrphanList />
+            <RecentNotes />
+          </div>
         </div>
       </div>
     </div>
@@ -34,17 +39,13 @@ function GraphView() {
 }
 
 function ChatView() {
-  return (
-    <div className="flex-1 flex flex-col">
-      <ChatPanel />
-    </div>
-  );
+  return <ChatPanel />;
 }
 
 function SettingsPlaceholder() {
   return (
-    <div className="flex-1 flex items-center justify-center text-muted-foreground">
-      <p>设置功能将在 P5 实现</p>
+    <div className="flex-1 flex flex-col items-center justify-center">
+      <p className="text-sm text-muted-foreground">设置将在 P5 中实现</p>
     </div>
   );
 }
