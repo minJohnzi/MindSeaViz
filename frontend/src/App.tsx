@@ -5,6 +5,7 @@ import { TagCloud } from "@/components/Dashboard/TagCloud";
 import { OrphanList } from "@/components/Dashboard/OrphanList";
 import { RecentNotes } from "@/components/Dashboard/RecentNotes";
 import { ChatPanel } from "@/components/ChatPanel/ChatPanel";
+import { SettingsPanel } from "@/components/Settings/SettingsPanel";
 import { useNavStore } from "@/stores";
 
 function DashboardView() {
@@ -42,19 +43,15 @@ function ChatView() {
   return <ChatPanel />;
 }
 
-function SettingsPlaceholder() {
-  return (
-    <div className="flex-1 flex flex-col items-center justify-center">
-      <p className="text-sm text-muted-foreground">设置将在 P5 中实现</p>
-    </div>
-  );
+function SettingsView() {
+  return <SettingsPanel />;
 }
 
 const views = {
   graph: GraphView,
   dashboard: DashboardView,
   chat: ChatView,
-  settings: SettingsPlaceholder,
+  settings: SettingsView,
 };
 
 function App() {
