@@ -4,6 +4,7 @@ import { StatsCards } from "@/components/Dashboard/StatsCards";
 import { TagCloud } from "@/components/Dashboard/TagCloud";
 import { OrphanList } from "@/components/Dashboard/OrphanList";
 import { RecentNotes } from "@/components/Dashboard/RecentNotes";
+import { ChatPanel } from "@/components/ChatPanel/ChatPanel";
 import { useNavStore } from "@/stores";
 
 function DashboardView() {
@@ -32,10 +33,10 @@ function GraphView() {
   );
 }
 
-function ChatPlaceholder() {
+function ChatView() {
   return (
-    <div className="flex-1 flex items-center justify-center text-muted-foreground">
-      <p>对话功能将在 P3 实现</p>
+    <div className="flex-1 flex flex-col">
+      <ChatPanel />
     </div>
   );
 }
@@ -51,7 +52,7 @@ function SettingsPlaceholder() {
 const views = {
   graph: GraphView,
   dashboard: DashboardView,
-  chat: ChatPlaceholder,
+  chat: ChatView,
   settings: SettingsPlaceholder,
 };
 

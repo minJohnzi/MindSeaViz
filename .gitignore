@@ -30,3 +30,6 @@ frontend/dist/
 
 # Claude
 .claude/
+
+# Secrets
+.env

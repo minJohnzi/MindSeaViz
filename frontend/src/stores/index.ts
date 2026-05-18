@@ -62,20 +62,68 @@ export const useDashboardStore = create<DashboardState>((set) => ({
 
 // ── Chat ──
 
-interface ChatState {
-  sessionId: string | null;
-  messages: Array<{ role: string; content: string }>;
-  isStreaming: boolean;
-  setSessionId: (id: string) => void;
-  addMessage: (msg: { role: string; content: string }) => void;
-  setIsStreaming: (v: boolean) => void;
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  sources?: Array<{
+    note_path: string;
+    title: string;
+    chunk: string;
+    score: number;
+  }>;
 }
 
-export const useChatStore = create<ChatState>((set) => ({
+export interface ChatSession {
+  id: string;
+  title: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface ChatState {
+  sessionId: string | null;
+  sessions: ChatSession[];
+  messages: ChatMessage[];
+  currentSources: ChatMessage["sources"];
+  isStreaming: boolean;
+  streamingContent: string;
+  setSessionId: (id: string) => void;
+  setSessions: (s: ChatSession[]) => void;
+  addSession: (s: ChatSession) => void;
+  setMessages: (m: ChatMessage[]) => void;
+  addMessage: (m: ChatMessage) => void;
+  setCurrentSources: (s: ChatMessage["sources"]) => void;
+  setIsStreaming: (v: boolean) => void;
+  appendStreaming: (delta: string) => void;
+  commitStreaming: (sources: ChatMessage["sources"]) => void;
+}
+
+export const useChatStore = create<ChatState>((set, get) => ({
   sessionId: null,
+  sessions: [],
   messages: [],
+  currentSources: undefined,
   isStreaming: false,
+  streamingContent: "",
   setSessionId: (id) => set({ sessionId: id }),
-  addMessage: (msg) => set((s) => ({ messages: [...s.messages, msg] })),
+  setSessions: (s) => set({ sessions: s }),
+  addSession: (s) => set((st) => ({ sessions: [s, ...st.sessions] })),
+  setMessages: (m) => set({ messages: m }),
+  addMessage: (m) => set((s) => ({ messages: [...s.messages, m] })),
+  setCurrentSources: (s) => set({ currentSources: s }),
   setIsStreaming: (v) => set({ isStreaming: v }),
+  appendStreaming: (delta) =>
+    set((s) => ({ streamingContent: s.streamingContent + delta })),
+  commitStreaming: (sources) => {
+    const content = get().streamingContent;
+    set({
+      messages: [
+        ...get().messages,
+        { role: "assistant", content, sources },
+      ],
+      streamingContent: "",
+      isStreaming: false,
+      currentSources: undefined,
+    });
+  },
 }));

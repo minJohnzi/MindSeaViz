@@ -2,12 +2,18 @@
 
 ConfigManager 是所有运行时配置的唯一数据源。
 首次 load() 时若 config.yaml 缺失，自动写入默认配置。
+启动时自动从 .env 文件加载环境变量（如 ANTHROPIC_API_KEY）。
 """
 
 from pathlib import Path
 
 import yaml
+from dotenv import load_dotenv
 from pydantic import BaseModel
+
+# 从项目根目录 .env 加载环境变量
+_project_root = Path(__file__).resolve().parents[2]  # core/config.py → backend → root
+load_dotenv(_project_root / ".env")
 
 
 class VaultConfig(BaseModel):

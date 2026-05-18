@@ -1,4 +1,4 @@
-const BASE = "http://127.0.0.1:8000";
+const BASE = "http://127.0.0.1:8001";
 
 export async function apiGet<T>(path: string): Promise<T> {
   const res = await fetch(`${BASE}${path}`);
@@ -16,24 +16,35 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   return res.json();
 }
 
-// SSE 流式聊天
+// ── SSE 流式聊天 ──
+
 export function streamChat(
-  path: string,
-  body: unknown,
-  onEvent: (event: string, data: unknown) => void
+  sessionId: string,
+  message: string,
+  onSources: (sources: Array<{ note_path: string; title: string; chunk: string; score: number }>) => void,
+  onDelta: (delta: string) => void,
+  onDone: (fullContent: string) => void,
+  onError: (error: string) => void
 ): AbortController {
   const controller = new AbortController();
-  fetch(`${BASE}${path}`, {
+
+  fetch(`${BASE}/api/chat/send`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify({ session_id: sessionId, message }),
     signal: controller.signal,
   }).then(async (res) => {
+    if (!res.ok) {
+      onError(`HTTP ${res.status}`);
+      return;
+    }
     const reader = res.body?.getReader();
     if (!reader) return;
     const decoder = new TextDecoder();
     let buf = "";
     let currentEvent = "";
+    let full = "";
+
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -44,11 +55,31 @@ export function streamChat(
         if (line.startsWith("event: ")) {
           currentEvent = line.slice(7).trim();
         } else if (line.startsWith("data: ")) {
-          const data = JSON.parse(line.slice(6));
-          onEvent(currentEvent, data);
+          try {
+            const data = JSON.parse(line.slice(6));
+            if (currentEvent === "sources") {
+              onSources(data);
+            } else if (currentEvent === "message" || !currentEvent) {
+              const delta = data.delta || "";
+              full += delta;
+              onDelta(delta);
+            } else if (currentEvent === "done") {
+              onDone(full);
+              return;
+            } else if (currentEvent === "error") {
+              onError(data.message || "Unknown error");
+              return;
+            }
+          } catch {
+            // skip malformed lines
+          }
         }
       }
     }
+    onDone(full);
+  }).catch((e) => {
+    if (e.name !== "AbortError") onError(e.message);
   });
+
   return controller;
 }

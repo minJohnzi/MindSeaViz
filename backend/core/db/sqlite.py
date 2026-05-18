@@ -79,6 +79,11 @@ class SQLiteDB:
     # ── 聊天消息 ──
 
     def add_message(self, session_id: str, role: str, content: str, sources: list | None = None) -> int:
+        # 如果会话不存在则自动创建
+        self.conn.execute(
+            "INSERT OR IGNORE INTO chat_sessions (id, title) VALUES (?, ?)",
+            (session_id, f"Chat {datetime.now():%Y-%m-%d %H:%M}"),
+        )
         cursor = self.conn.execute(
             "INSERT INTO chat_messages (session_id, role, content, sources) VALUES (?, ?, ?, ?)",
             (session_id, role, content, json.dumps(sources or [])),

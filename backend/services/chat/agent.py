@@ -7,8 +7,18 @@
 import asyncio
 import os
 from dataclasses import dataclass, field
+from pathlib import Path as _Path
 
 from anthropic import AsyncAnthropic
+from dotenv import load_dotenv
+
+# 确保 .env 已加载（防御性，config.py 也会加载）
+_load_root = _Path(__file__).resolve().parents[3]
+load_dotenv(_load_root / ".env")
+
+import logging
+_log = logging.getLogger(__name__)
+_log.info(f".env loaded from {_load_root}, key={'SET' if os.environ.get('ANTHROPIC_API_KEY') else 'MISSING'}")
 
 from services.search.hybrid import SearchEngine, SearchResult
 
